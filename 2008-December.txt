@@ -1,0 +1,74 @@
+From marten.wallin at gmail.com  Fri Dec 12 15:50:53 2008
+From: marten.wallin at gmail.com (=?ISO-8859-1?Q?M=E5rten_Wallin?=)
+Date: Fri, 12 Dec 2008 15:50:53 +0100
+Subject: [Puzzle-npersist] An object with the key "" is already registered
+	in the identity map!
+Message-ID: <e5cb8faf0812120650v5b9b07c3kb2ff1c95b4ee51e7@mail.gmail.com>
+
+Hi all,
+
+I'm new to NPersist and have a slight problem with a create method.
+
+        [TestMethod]
+        public void CreateProviderCourseTest()
+        {
+            ProviderCourse providerCourse = null;
+            ProviderCourse providerCourse2 = null;
+
+            providerCourse = CreateProviderCourse("CourseNumber1",
+"OrganisationNumber");
+            providerCourse2 = CreateProviderCourse("CourseNumber2",
+"OrganisationNumber");
+
+            Assert.IsNotNull(providerCourse);
+            Assert.IsNotNull(providerCourse2);
+
+        }
+
+        private static ProviderCourse CreateProviderCourse(string
+courseNo, string orgNo)
+        {
+            Course course = new Course();
+            course.No = courseNo;
+
+            Provider provider = ProviderRepository.GetProviderByOrgNo(orgNo);
+
+            ProviderCourse providerCourse =
+CourseFactory.CreateProviderCourse(course, provider);
+
+            return providerCourse;
+        }
+
+
+
+
+        public static ProviderCourse CreateProviderCourse(Course
+course, Provider provider)
+        {
+            IContext context = ContextRepository.CurrentContext;
+
+            ProviderCourse providerCourse =
+context.CreateObject<ProviderCourse>();
+            providerCourse.CourseNo = course.No;
+            providerCourse.ProviderNo = provider.No;
+
+            context.Commit();
+
+            return providerCourse;
+        }
+
+
+I get the error "An object with the key "" is already registered in
+the identity map!" when I try to create the _second_ object.
+
+There are similar create methods in the project that works but I can't
+see any differences to this one. But there probably are. :-)
+
+I can get it to work by adding the row
+"context.IdentityMap.RemoveObject(providerCourse);" after
+context.Commit(); Is this really necessary/good practice?
+
+Regards,
+M?rten
+
+

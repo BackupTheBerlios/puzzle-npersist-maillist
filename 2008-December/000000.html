@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Puzzle-npersist] An object with the key &quot;&quot; is already registered	in the identity map!
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/puzzle-npersist/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:puzzle-npersist%40lists.berlios.de?Subject=Re%3A%20%5BPuzzle-npersist%5D%20An%20object%20with%20the%20key%20%22%22%20is%20already%20registered%0A%09in%20the%20identity%20map%21&In-Reply-To=%3Ce5cb8faf0812120650v5b9b07c3kb2ff1c95b4ee51e7%40mail.gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Puzzle-npersist] An object with the key &quot;&quot; is already registered	in the identity map!</H1>
+    <B>M&#229;rten Wallin</B> 
+    <A HREF="mailto:puzzle-npersist%40lists.berlios.de?Subject=Re%3A%20%5BPuzzle-npersist%5D%20An%20object%20with%20the%20key%20%22%22%20is%20already%20registered%0A%09in%20the%20identity%20map%21&In-Reply-To=%3Ce5cb8faf0812120650v5b9b07c3kb2ff1c95b4ee51e7%40mail.gmail.com%3E"
+       TITLE="[Puzzle-npersist] An object with the key &quot;&quot; is already registered	in the identity map!">marten.wallin at gmail.com
+       </A><BR>
+    <I>Fri Dec 12 15:50:53 CET 2008</I>
+    <P><UL>
+        
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#0">[ date ]</a>
+              <a href="thread.html#0">[ thread ]</a>
+              <a href="subject.html#0">[ subject ]</a>
+              <a href="author.html#0">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi all,
+
+I'm new to NPersist and have a slight problem with a create method.
+
+        [TestMethod]
+        public void CreateProviderCourseTest()
+        {
+            ProviderCourse providerCourse = null;
+            ProviderCourse providerCourse2 = null;
+
+            providerCourse = CreateProviderCourse(&quot;CourseNumber1&quot;,
+&quot;OrganisationNumber&quot;);
+            providerCourse2 = CreateProviderCourse(&quot;CourseNumber2&quot;,
+&quot;OrganisationNumber&quot;);
+
+            Assert.IsNotNull(providerCourse);
+            Assert.IsNotNull(providerCourse2);
+
+        }
+
+        private static ProviderCourse CreateProviderCourse(string
+courseNo, string orgNo)
+        {
+            Course course = new Course();
+            course.No = courseNo;
+
+            Provider provider = ProviderRepository.GetProviderByOrgNo(orgNo);
+
+            ProviderCourse providerCourse =
+CourseFactory.CreateProviderCourse(course, provider);
+
+            return providerCourse;
+        }
+
+
+
+
+        public static ProviderCourse CreateProviderCourse(Course
+course, Provider provider)
+        {
+            IContext context = ContextRepository.CurrentContext;
+
+            ProviderCourse providerCourse =
+context.CreateObject&lt;ProviderCourse&gt;();
+            providerCourse.CourseNo = course.No;
+            providerCourse.ProviderNo = provider.No;
+
+            context.Commit();
+
+            return providerCourse;
+        }
+
+
+I get the error &quot;An object with the key &quot;&quot; is already registered in
+the identity map!&quot; when I try to create the _second_ object.
+
+There are similar create methods in the project that works but I can't
+see any differences to this one. But there probably are. :-)
+
+I can get it to work by adding the row
+&quot;context.IdentityMap.RemoveObject(providerCourse);&quot; after
+context.Commit(); Is this really necessary/good practice?
+
+Regards,
+M&#229;rten
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#0">[ date ]</a>
+              <a href="thread.html#0">[ thread ]</a>
+              <a href="subject.html#0">[ subject ]</a>
+              <a href="author.html#0">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/puzzle-npersist">More information about the Puzzle-npersist
+mailing list</a><br>
+</body></html>
